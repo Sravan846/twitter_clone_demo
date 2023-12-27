@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>twitter chat application</title>
+    <link rel="icon" type="image/x-icon" href="images/twitter.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- <link rel="stylesheet" href="css/Whats.css"> -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      .container .leftSide {
+        position: relative;
+        flex: 30%;
+        background: #fff;
+        border-right: 1px solid rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+
+  <body onload="show()">
+    <div class="container">
+      <div class="leftSide">
+        <!-- Header -->
+        <div class="header">
+          <div class="userimg">
+            <button onclick="logOut()">
+              <img src="images/logo.jpg" alt="" class="cover" />
+            </button>
+          </div>
+          <div class="name">
+            <span> <%=name %> </span>
+            <span class="status" id="usStatus">online</span>
+          </div>
+        </div>
+        <!-- Search Chat -->
+        <div class="search_chat">
+          <div>
+            <input type="text" placeholder="Search or start new chat" />
+            <ion-icon name="search-outline"></ion-icon>
+          </div>
+        </div>
+        <!-- CHAT LIST -->
+        <div class="chatlist" id="usList"></div>
+      </div>
+      <div class="rightSide">
+        <div class="header" id="showName"></div>
+
+        <!-- CHAT-BOX -->
+        <div class="chatbox"></div>
+        <form class="conversation-compose" id="chat-form">
+          <!-- CHAT INPUT -->
+          <div class="chat_input">
+            <a onclick="return clearData()">
+              <i class="fa-solid fa-trash"></i>
+            </a>
+            <!-- <ion-icon name="happy-outline"></ion-icon> -->
+            <input type="text" id="msg" placeholder="Type a message" />
+            <button class="send" style="border: none">
+              <div class="circle">
+                <i class="fa-solid fa-paper-plane"></i>
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js"
+      integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      function show() {
+        localStorage.setItem("from", "<%=name %>");
+        getuser(localStorage.getItem("to"));
+        if (localStorage.getItem("to")) {
+          document.getElementById(
+            "showName"
+          ).innerHTML = ` <div class="imgText">
+            <div class="userimg">
+              <img src="images/11.jpg" alt="" class="cover" />
+            </div>
+            <h4 id="showname">${localStorage.getItem("to")} <br /></h4>
+          </div>
+         `;
+        }
+      }
+      function getuser(touser) {
+        // console.log(touser);
+        if (touser) {
+          document.getElementById(
+            "showName"
+          ).innerHTML = ` <div class="imgText">
+            <div class="userimg">
+              <img src="images/11.jpg" alt="" class="cover" />
+            </div>
+            <h4 id="showname">${touser} <br /></h4>
+          </div>
+          <ul class="nav_icons">
+            <li><ion-icon name="search-outline"></ion-icon></li>
+            <li><ion-icon name="ellipsis-vertical"></ion-icon></li>
+          </ul>`;
+          storeDetails("<%=name %>", touser);
+        }
+      }
+      function clearData() {
+        if (confirm("Are you sure want to delete your chat")) {
+          var name = "<%=name %>";
+          var touser = localStorage.getItem("to");
+          socket.emit("clearchat", { name, touser });
+        }
+      }
+      function logOut() {
+        localStorage.removeItem("from");
+        localStorage.removeItem("to");
+        window.location = "logout";
+      }
+    </script>
+    <script src="js/pchat.js"></script>
+  </body>
+</html>

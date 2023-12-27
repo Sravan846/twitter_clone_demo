@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>twitter group chat application</title>
+    <link rel="icon" type="image/x-icon" href="images/twitter.png">
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- <link rel="stylesheet" href="css/Whats.css"> -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body onload="show()">
+    <div class="container">
+      <div class="leftSide">
+        <!-- Header -->
+        <div class="header">
+          <div class="userimg">
+            <button onclick="logOut()">
+              <img src="images/logo.jpg" alt="" class="cover" />
+            </button>
+          </div>
+          <div class="name">
+            <span> <%=name %> </span>
+            <span class="status">online</span>
+          </div>
+        </div>
+      </div>
+      <div class="rightSide">
+        <div class="header" id="showName"></div>
+
+        <!-- CHAT-BOX -->
+        <div class="chatbox"></div>
+        <form class="conversation-compose" id="chat-form">
+          <!-- CHAT INPUT -->
+          <div class="chat_input">
+            <a onclick="return clearData()">
+              <i class="fa-solid fa-trash"></i>
+            </a>
+            <!-- <ion-icon name="happy-outline"></ion-icon> -->
+            <input type="text" id="msg" placeholder="Type a message" />
+            <button class="send" style="border: none">
+              <div class="circle">
+                <i class="fa-solid fa-paper-plane"></i>
+              </div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js"
+      integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/gchat.js"></script>
+    <script>
+      function show() {
+        var room = prompt("enter chat room ");
+        if (room) localStorage.setItem("room", room);
+        localStorage.setItem("username", "<%=name %>");
+        socket.emit("userMessages", { name, room });
+      }
+      function logOut() {
+        localStorage.removeItem("username");
+        localStorage.removeItem("room");
+        window.location = "logout";
+      }
+      function clearData() {
+        if (confirm("Are you sure want to delete your chat")) {
+          var name = "<%=name %>";
+          var room = localStorage.getItem("room");
+          socket.emit("clearGchat", { name, room });
+        }
+      }
+    </script>
+  </body>
+</html>
